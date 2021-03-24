@@ -41,7 +41,15 @@ class EssayForm extends React.Component {
   }
 
   handleSubmit(event) {
-    alert(this.state.item + " | " + this.state.category + " | " + this.state.price);
+    const requestOptions = {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain' },
+      body: 'spending,item='+this.state.item+',category='+this.state.category+' value='+this.state.price
+    };
+    fetch('http://influxdb-spending-monitoring-influxdb-svc:8086/write?db=spending_metrics', requestOptions)
+        .then(response => response.json())
+        .then(data => window.M.toast(data));
+    window.M.toast({html: "Item registered: " + this.state.item + " (" + this.state.category + ") - £" + this.state.price}, 1000);
     event.preventDefault();
   }
 
